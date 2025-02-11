@@ -1,0 +1,14 @@
+services:
+  workers:
+    image: cribl/cribl:4.10.0
+    container_name: cribl-worker-docker
+    hostname: cribl-worker-docker
+    #user: 999:999
+    environment:
+      - CRIBL_DIST_MODE=worker
+      - CRIBL_DIST_LEADER_URL=tcp://DytNWmJA2AwEybd4BqziTiSHSBel47DK@10.10.10.15:4200?group=default
+      - CRIBL_VOLUME_DIR=/tmp/
+      - CRIBL_EF_UUID=1234_CHECKING_UUID
+    ports:
+      - "4200:4200"
+      - "514:514"
