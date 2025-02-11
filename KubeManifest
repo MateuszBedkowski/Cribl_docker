@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cribl-worker-deployment
+  labels:
+    app: cribl-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cribl-worker
+  template:
+    metadata:
+      labels:
+        app: cribl-worker
+    spec:
+      containers:
+      - name: cribl-worker
+        image: cribl/cribl:4.10.0
+        env:
+        - name: CRIBL_DIST_MODE
+          value: "worker"
+        - name: CRIBL_DIST_LEADER_URL
+          value: "tcp://DytNWmJA2AwEybd4BqziTiSHSBel47DK@10.10.10.15:4200?group=default"
+        - name: CRIBL_VOLUME_DIR
+          value: "/tmp/"
+        - name: CRIBL_EF_UUID
+          value: "1234_CHECKING_UUID"
+        ports:
+        - containerPort: 4200
+        - containerPort: 514
+        volumeMounts:
+        - name: cribl-volume
+          mountPath: /tmp/
+      volumes:
+      - name: cribl-volume
+        emptyDir: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cribl-worker-service
+spec:
+  selector:
+    app: cribl-worker
+  ports:
+  - protocol: TCP
+    port: 4200
+    targetPort: 4200
+  - protocol: TCP
+    port: 514
+    targetPort: 514
+  type: LoadBalancer
